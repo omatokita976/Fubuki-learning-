@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>Fubuki Learning</title>
+<style>
+:root{--bg1:#fdf2f8;--bg2:#f1e6ff;--card:rgba(255,255,255,.72);--tx:#2e1a47;--mu:#7a6892;--ac:#a855c7;--ac2:#ec6fb0;--ok:#1f8a55;--ko:#c2347a;--bd:rgba(168,85,199,.22);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg1:#1b1026;--bg2:#2c1646;--card:rgba(48,28,72,.7);--tx:#f6eefc;--mu:#b9a5d1;--ac:#c58bf0;--ac2:#f08cc4;--ok:#6fdca0;--ko:#ff8fc0;--bd:rgba(197,139,240,.28)}}
+:root[data-theme="dark"]{--bg1:#1b1026;--bg2:#2c1646;--card:rgba(48,28,72,.7);--tx:#f6eefc;--mu:#b9a5d1;--ac:#c58bf0;--ac2:#f08cc4;--ok:#6fdca0;--ko:#ff8fc0;--bd:rgba(197,139,240,.28)}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{background:linear-gradient(160deg,var(--bg1),var(--bg2)) fixed;color:var(--tx);font:17px/1.5 "Avenir Next",Avenir,"Segoe UI",system-ui,-apple-system,sans-serif;min-height:100vh;overflow-x:hidden}
+.bubbles{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.bubbles i{position:absolute;bottom:-160px;border-radius:50%;background:radial-gradient(circle at 30% 28%,rgba(255,255,255,.75),rgba(236,111,176,.22) 45%,rgba(168,85,199,.16));border:1px solid rgba(255,255,255,.45);animation:rise linear infinite;opacity:0}
+@keyframes rise{0%{transform:translate(0,0);opacity:0}10%{opacity:.85}90%{opacity:.7}100%{transform:translate(var(--dx,30px),-120vh);opacity:0}}
+@media (prefers-reduced-motion:reduce){.bubbles i{animation:none;opacity:.35;bottom:auto}}
+main{position:relative;z-index:1;max-width:520px;margin:0 auto;padding:28px 18px 48px}
+h1{font:600 2rem/1.15 Georgia,"Times New Roman",serif;letter-spacing:.3px;margin:8px 0 6px;text-align:center;background:linear-gradient(90deg,var(--ac),var(--ac2));-webkit-background-clip:text;background-clip:text;color:transparent}
+p{margin:6px 0 16px;color:var(--mu)}
+main>p{text-align:center}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:22px;padding:22px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 12px 40px rgba(168,85,199,.16)}
+button{display:block;width:100%;text-align:left;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px 16px;margin:10px 0;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:transform .15s,border-color .15s,box-shadow .15s}
+button:hover:not(:disabled){border-color:var(--ac);transform:translateY(-1px);box-shadow:0 6px 18px rgba(168,85,199,.18)}
+button:disabled{cursor:default}
+button.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--card))}
+button.ko{border-color:var(--ko);background:color-mix(in srgb,var(--ko) 16%,var(--card))}
+button.go{background:linear-gradient(90deg,var(--ac),var(--ac2));color:#fff;text-align:center;border:0;font-weight:600;letter-spacing:.3px}
+.bar{height:6px;background:var(--bd);border-radius:3px;overflow:hidden;margin-bottom:16px}
+.bar div{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:3px;transition:width .3s}
+.q{font:600 1.2rem/1.4 Georgia,"Times New Roman",serif;margin:0 0 10px;color:var(--tx)}
+.fb{color:var(--tx);font-size:.95rem;margin:10px 0 4px}
+input,textarea{width:100%;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;margin:6px 0 10px}
+input:focus,textarea:focus{outline:2px solid var(--ac)}
+.row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--bd)}
+.big{font:700 3rem Georgia,serif;text-align:center;margin:10px 0;color:var(--ac)}
+.card h1{font-size:1.6rem}
+</style>
+</head>
+<body>
+<div class="bubbles" id="bub" aria-hidden="true"></div>
+<main id="app"></main>
+<script>
+"use strict";
+const LEVELS=[
+{n:"6e",s:"Découverte · A1",q:[
+["En México, la ley más importante es…",["La Constitución","El menú","La canción","La carta postal"],0,"La Constitución Política de los Estados Unidos Mexicanos date de 1917."],
+["Matar a una persona es un delito llamado…",["homicidio","saludo","regalo","juego"],0,"Homicidio = meurtre / homicide."],
+["¿Quién decide en el tribunal?",["El juez","El panadero","El cartero","El payaso"],0,"El juez = le juge."],
+["Robar es un delito en México.",["Verdadero","Falso","Depende del día"],0,"Robo = vol. C’est un délit puni par la loi."],
+["¿Quién protege a las personas y combate el crimen?",["La policía","El pintor","El músico","El cocinero"],0,"La policía = la police."]]},
+{n:"5e",s:"A1",q:[
+["Una persona que comete un delito se llama…",["delincuente","maestro","turista","vecino"],0,"Delincuente = délinquant."],
+["¿Quién tiene derecho a ayuda y protección según la Ley General de Víctimas?",["La víctima","Nadie","Solo el juez","Solo el policía"],0,"La Ley General de Víctimas (2013) protège les victimes."],
+["En México, la pena de muerte está…",["prohibida (interdite)","permitida (permise)","obligatoria (obligatoire)","gratuita (gratuite)"],0,"L’article 22 de la Constitution interdit la peine de mort."],
+["En México, una persona es mayor de edad a los…",["18 años","10 años","14 años","25 años"],0,"La mayoría d’âge (et la responsabilité pénale des adultes) commence à 18 ans."],
+["Una persona condenada por un delito grave puede ir a…",["la prisión","la playa","el cine","el mercado"],0,"Prisión / cárcel = prison."]]},
+{n:"4e",s:"A1-A2",q:[
+["Art. 17: « Nadie puede hacerse justicia por sí mismo. » Cela signifie…",["Personne ne peut se faire justice soi-même","Tout le monde peut punir","Le juge est inutile","La justice est payante"],0,"C’est l’État, par ses tribunaux, qui rend la justice."],
+["El robo consiste en…",["prendre un bien d’autrui sans droit","aider un voisin","acheter un livre","réparer une voiture"],0,"Código Penal Federal : apoderarse de una cosa ajena mueble sin derecho."],
+["¿Quién investiga los delitos en México?",["El Ministerio Público (la fiscalía)","El panadero","El cartero","El arquitecto"],0,"Art. 21 : le Ministerio Público dirige l’enquête avec les polices."],
+["Todo acusado tiene derecho a…",["un abogado defensor","no ser juzgado jamás","esconder pruebas","insultar al juez"],0,"Art. 20 : le droit à une défense adéquate."],
+["« Hacer una denuncia » signifie…",["porter plainte, signaler un délit","faire une fête","écrire un poème","acheter du pain"],0,"La denuncia informe l’autorité qu’un délit a pu être commis."]]},
+{n:"3e",s:"A2",q:[
+["Art. 20 : el proceso penal es « acusatorio y oral ». « Oral » signifie…",["parlé (par la parole)","secret","écrit seulement","gratuit"],0,"Les audiences sont orales et publiques depuis la réforme de 2008."],
+["« El imputado » es…",["la personne mise en cause dans un procès pénal","le juge","le témoin","l’avocat de la victime"],0,"Imputado = personne à qui l’on attribue un délit (pas encore condamnée)."],
+["La legítima defensa significa…",["se défendre d’une agression actuelle et injuste","attaquer le premier","se venger plus tard","fuir sans rien dire"],0,"Código Penal Federal, art. 15 : cause d’exclusion du délit."],
+["« Detención en flagrancia » significa…",["arrestation sur le fait","arrestation un an après","amende","visite de la prison"],0,"Flagrancia : on est arrêté au moment de commettre le délit ou juste après."],
+["El feminicidio es matar a una mujer por razones de…",["género","météo","sport","cuisine"],0,"Le féminicide est un délit prévu par le Código Penal Federal (art. 325)."]]},
+{n:"2nde",s:"B1",q:[
+["Art. 20 B : toda persona imputada se presume…",["inocente mientras no se demuestre su culpabilidad","culpable desde el inicio","ni culpable ni inocente","peligrosa siempre"],0,"C’est la présomption d’innocence, droit fondamental mexicain."],
+["El imputado tiene derecho a…",["guardar silencio","ocultar pruebas","huir del país","amenazar a testigos"],0,"Art. 20 B : droit de se taire, qui ne peut être utilisé contre lui."],
+["Un delito « doloso » es el que se comete…",["con intención","por imprudencia","por error de la víctima","en sueños"],0,"Doloso = intentionnel ; culposo = par imprudence (CPF, art. 8)."],
+["« No hay delito sin ley previa » expresa el principio de…",["legalidad","venganza","costumbre","rapidez"],0,"Art. 14 : on ne peut punir sans loi antérieure (nullum crimen sine lege)."],
+["La Ley General de Víctimas busca garantizar…",["asistencia, protección, justicia y reparación del daño","impunidad de los culpables","castigos sin juicio","secreto de los procesos"],0,"Elle reconnaît les droits des victimes, dont la réparation du dommage."]]},
+{n:"1ère",s:"B2",q:[
+["Art. 18 : ¿cuál NO es una base de la reinserción social?",["El castigo físico","El trabajo","La educación","El deporte"],0,"Bases : travail, formation, éducation, santé et sport."],
+["Art. 19 : el juez resuelve la situación jurídica del imputado (vinculación a proceso) en un plazo constitucional de…",["72 horas","24 horas","10 días","1 año"],0,"Le délai est de 72 heures, pouvant être doublé à la demande de l’inculpé."],
+["¿Cuál es un principio del proceso penal acusatorio (art. 20)?",["La contradicción","El secreto absoluto","La improvisación","La venganza"],0,"Publicité, contradiction, concentration, continuité, immédiateté."],
+["El Código Nacional de Procedimientos Penales (2014) sirve para…",["unificar las reglas del procedimiento penal en todo el país","abolir los tribunales","crear nuevos delitos solo en un estado","eliminar a las víctimas"],0,"Avant, chaque État avait ses propres règles de procédure."],
+["Hay « tentativa » cuando…",["se inicia el delito pero no se consuma por causas ajenas","el delito se comete sin intención","no hay ningún acto","el juez absuelve"],0,"Código Penal Federal, art. 12."]]},
+{n:"Terminale",s:"B2-C1",q:[
+["Según el art. 22 constitucional, están prohibidos…",["la pena de muerte y el tormento","las multas de tránsito","las audiencias orales","los abogados"],0,"Aussi : mutilation, infamie, marque, coups, confiscation de biens."],
+["Imponer las penas es facultad exclusiva de…",["la autoridad judicial","la policía","los periodistas","los vecinos"],0,"Art. 21 : seuls les juges prononcent les peines."],
+["La Fiscalía General de la República es…",["un órgano autónomo que persigue los delitos federales","un tribunal de apelación","una cárcel federal","un partido político"],0,"Art. 102 A de la Constitution."],
+["El Sistema Integral de Justicia Penal para Adolescentes se aplica a personas de…",["12 años cumplidos a menos de 18","0 a 5 años","18 a 30 años","más de 60 años"],0,"Loi nationale de 2016 : justice pénale spécifique pour mineurs de 12 à 17 ans."],
+["¿Cuál es la diferencia entre derecho penal y criminología?",["El derecho penal define delitos y penas; la criminología estudia sus causas y su prevención","Son exactamente lo mismo","La criminología crea las leyes","El derecho penal solo estudia a las víctimas"],0,"La criminologie est une science empirique ; le droit pénal est normatif."]]}
+];
+const app=document.getElementById("app");
+let lvl=null,order=[],i=0,score=0,ci=0,cp=null,who="",sp=0;
+function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
+function shuffle(a){a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
+function clear(){while(app.firstChild)app.removeChild(app.firstChild)}
+const PAYS=[
+{n:"🇲🇽 Mexique",m:1},
+{n:"🇨🇫 République centrafricaine",
+c:[
+["En 2022, la République centrafricaine a…",["aboli la peine de mort","créé la peine de mort","supprimé tous les tribunaux","interdit la police"],0,"L’Assemblée nationale a voté l’abolition le 27 mai 2022 (dernière exécution : 1981)."],
+["La Cour pénale spéciale (CPS) juge surtout…",["les crimes de guerre et crimes contre l’humanité","les vols de poules","les accidents de vélo","les disputes de voisins"],0,"C’est une juridiction nationale avec des juges centrafricains et internationaux."],
+["La peine est prononcée par…",["un juge (tribunal)","un voisin","un journaliste","un commerçant"],0,"Espagnol : la pena = la peine ; el juez = le juge."],
+["Le procureur de la République…",["poursuit les infractions au nom de la société","vend des billets","répare les routes","soigne les malades"],0,"Espagnol : el fiscal = le procureur."],
+["Un témoin doit…",["dire la vérité","mentir","se cacher toujours","s’enfuir"],0,"Espagnol : el testigo = le témoin."]],
+l:[
+["La Cour pénale spéciale (CPS) est une juridiction…",["hybride (juges nationaux et internationaux)","privée","religieuse","uniquement étrangère"],0,"Créée par une loi de 2015 pour juger les graves violations des droits humains."],
+["Quel organe a voté l’abolition de la peine de mort en RCA (27 mai 2022) ?",["L’Assemblée nationale","La CPI","Le conseil municipal","L’armée"],0,"La RCA est devenue le 24e État africain abolitionniste."],
+["La CPS complète le travail de la CPI : c’est le principe de…",["complémentarité","concurrence","vengeance","secret"],0,"La justice nationale agit en premier, la CPI intervient en complément."],
+["La dernière exécution en RCA remonte à…",["1981","1901","2019","2022"],0,"Le pays était abolitionniste de fait avant l’abolition légale de 2022."],
+["Selon le Code de procédure pénale, les sessions criminelles doivent se tenir au moins…",["six fois par an","une fois par siècle","jamais","tous les jours"],0,"Amnesty International demande un budget pour tenir ces six sessions."]]},
+{n:"🇨🇲 Cameroun",
+c:[
+["Le Code pénal camerounais actuel date de…",["2016","1816","1990","2030"],0,"Loi n° 2016/007 du 12 juillet 2016."],
+["Le détournement de deniers publics, c’est…",["voler de l’argent appartenant à l’État","offrir un cadeau","payer ses impôts","construire une école"],0,"Espagnol : el robo = le vol ; el fraude = la fraude."],
+["Le Code pénal prévoit encore la peine de mort pour…",["certains crimes très graves","aucun crime","les retards en classe","les contraventions"],0,"Par exemple l’assassinat (art. 276), selon la presse juridique."],
+["« El fiscal » en espagnol désigne…",["le procureur","le médecin","le chauffeur","le cuisinier"],0,"Il poursuit les infractions au nom de la société."],
+["En général, une loi pénale plus sévère ne s’applique pas aux faits commis…",["avant son entrée en vigueur","après son entrée en vigueur","aujourd’hui","demain"],0,"C’est le principe de non-rétroactivité de la loi pénale plus sévère."]],
+l:[
+["Le Code pénal camerounais en vigueur a été adopté par la loi du…",["12 juillet 2016","1er janvier 1960","14 juillet 1789","4 mai 2030"],0,"Loi n° 2016/007."],
+["Le Tribunal criminel spécial juge les détournements de biens publics à partir de…",["50 millions de FCFA","5 000 FCFA","1 000 FCFA","aucun montant"],0,"Créé par la loi du 14 décembre 2011, modifiée en 2012."],
+["Parmi les innovations du Code pénal de 2016 :",["la responsabilité pénale des personnes morales","la suppression des tribunaux","l’abolition de toutes les peines","l’interdiction des avocats"],0,"Il prévoit aussi des peines alternatives à l’emprisonnement."],
+["Le Code pénal de 2016 prévoit encore la peine de mort pour…",["l’assassinat","la lecture","le sport","la danse"],0,"Les associations demandent l’abolition de cette peine."],
+["« Pas de peine sans loi » est le principe de…",["légalité des peines","vengeance privée","rapidité","hasard"],0,"Latin : nulla poena sine lege."]]},
+{n:"🇫🇷 France",
+c:[
+["La peine de mort a été abolie en France en…",["1981","1789","1945","2010"],0,"Loi du 9 octobre 1981."],
+["Quelle infraction est la plus grave ?",["le crime","la contravention","le délit","le retard"],0,"Trois catégories : contravention, délit, crime."],
+["À partir de quel âge est-on majeur pénalement en France ?",["18 ans","12 ans","15 ans","21 ans"],0,"Les mineurs relèvent d’une justice spécifique."],
+["Qui juge les crimes en France ?",["la cour d’assises (ou cour criminelle)","le maire","le facteur","le directeur d’école"],0,"Espagnol : el crimen = le crime ; el delito = le délit."],
+["La garde à vue permet à la police de…",["retenir temporairement une personne suspectée","punir sans juge","fermer l’école","juger un procès"],0,"Elle est encadrée par la loi et le droit à un avocat."]],
+l:[
+["Quel texte de 1789 proclame la présomption d’innocence ?",["la Déclaration des droits de l’homme et du citoyen","le Code de la route","la Charte des sports","la Constitution de 1958"],0,"Article 9 de la Déclaration."],
+["Qui a défendu l’abolition de la peine de mort devant l’Assemblée en 1981 ?",["Robert Badinter","Napoléon","Louis XIV","Victor Hugo"],0,"Garde des Sceaux de l’époque."],
+["Quel code encadre la justice des mineurs depuis 2021 ?",["le Code de la justice pénale des mineurs","le Code de la route","le Code du travail","le Code rural"],0,"Il est entré en vigueur le 30 septembre 2021."],
+["Le principe de légalité signifie…",["pas de peine sans loi","tout est permis","le juge invente la loi","la police décide seule"],0,"Article 111-3 du Code pénal."],
+["La Cour de cassation juge…",["le droit, pas les faits","les faits uniquement","les contraventions de stationnement","les élections"],0,"Elle vérifie la bonne application de la loi."]]},
+{n:"🌍 Monde (justice internationale)",
+c:[
+["La Cour pénale internationale (CPI) siège à…",["La Haye (Pays-Bas)","Bangui","Mexico","Dakar"],0,"Espagnol : La Haya."],
+["La Déclaration universelle des droits de l’homme date de…",["1948","1648","1999","2024"],0,"Elle a été adoptée par l’ONU."],
+["Quel crime est jugé par la CPI ?",["le génocide","le vol de vélo","le bruit de voisinage","le retard"],0,"Génocide = destruction d’un groupe humain."],
+["Interpol sert à…",["faciliter la coopération entre polices de plusieurs pays","juger les crimes","fabriquer des armes","écrire les lois"],0,"Interpol n’a pas de police propre qui arrête partout."],
+["Un procès équitable exige un juge…",["impartial et indépendant","qui connaît déjà la décision","payé par l’accusé","absent"],0,"Espagnol : un juicio justo."]],
+l:[
+["Le Statut de Rome, qui crée la CPI, a été adopté en…",["1998","1798","1898","2018"],0,"Il est entré en vigueur en 2002."],
+["Lequel n’est PAS de la compétence de la CPI ?",["le vol à l’étalage","le génocide","les crimes de guerre","les crimes contre l’humanité"],0,"Quatre crimes : génocide, contre l’humanité, de guerre, d’agression."],
+["Principe de complémentarité : la CPI intervient…",["si les États ne veulent ou ne peuvent pas juger","toujours en premier","jamais","à la place des écoles"],0,"La justice nationale reste prioritaire."],
+["L’article 11 de la DUDH garantit…",["la présomption d’innocence","le vote obligatoire","la gratuité des voitures","l’interdiction d’avocats"],0,"Toute personne accusée est présumée innocente jusqu’à preuve de sa culpabilité."],
+["« Non bis in idem » signifie…",["nul ne peut être jugé deux fois pour les mêmes faits","tout se juge deux fois","le juge peut doubler la peine","la victime est jugée"],0,"Principe protecteur reconnu dans de nombreux systèmes juridiques."]]}
+];
+function pays(k){
+  clear();
+  app.append(el("h1",null,"🌍 Choisis ton pays"),el("p",null,"Classe : "+LEVELS[k].n));
+  PAYS.forEach(p=>{const b=el("button",null,p.n);b.type="button";b.addEventListener("click",()=>start(k,p));app.append(b)});
+  const r=el("button",null,"← Changer de classe");r.type="button";r.addEventListener("click",home);app.append(r);
+}
+function home(){
+  clear();lvl=null;
+  app.append(el("h1",null,"❄️ Fubuki Learning"),el("p",null,"Droit & criminologie des pays d’Afrique et du monde · 6e → Terminale. Choisis ta classe pour commencer."));
+  app.append(el("p",null,"Contenu éducatif, ne remplace pas un conseil juridique."));
+  const inp=el("input");inp.type="text";in
