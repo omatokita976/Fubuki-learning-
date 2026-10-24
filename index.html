@@ -157,4 +157,100 @@ function home(){
   clear();lvl=null;
   app.append(el("h1",null,"❄️ Fubuki Learning"),el("p",null,"Droit & criminologie des pays d’Afrique et du monde · 6e → Terminale. Choisis ta classe pour commencer."));
   app.append(el("p",null,"Contenu éducatif, ne remplace pas un conseil juridique."));
-  const inp=el("input");inp.type="text";in
+  const inp=el("input");inp.type="text";inp.maxLength=20;inp.placeholder="Ton pseudo";inp.setAttribute("aria-label","Pseudo");inp.value=who;
+  const msg=el("p","fb");const rk=el("button",null,"🏆 Voir le classement");rk.type="button";rk.addEventListener("click",ranking);
+  app.append(inp,msg,rk);
+  LEVELS.forEach((L,k)=>{const b=el("button",null,L.n+" · "+L.s);b.type="button";b.addEventListener("click",()=>{who=clean(inp.value);if(!who){msg.textContent="Entre ton pseudo pour commencer.";return}pays(k)});app.append(b)});
+}
+function start(k,p){ci=k;cp=p;const C=LEVELS[k];lvl={n:C.n+" · "+p.n,q:p.m?C.q:(k<4?p.c:p.l)};order=shuffle(lvl.q);i=0;score=0;sp=0;ask()}
+function ask(){
+  clear();
+  const d=order[i];
+  const bar=el("div","bar");const f=el("div");f.style.width=(i/order.length*100)+"%";bar.append(f);
+  const card=el("div","card");
+  card.append(el("p",null,lvl.n+" · Question "+(i+1)+"/"+order.length),bar,el("p","q",d[0]));
+  const opts=shuffle(d[1].map((t,idx)=>({t,ok:idx===d[2]})));
+  const btns=[];
+  const next=el("button","go",i+1<order.length?"Suivant →":"Voir mon score");next.type="button";next.hidden=true;
+  next.addEventListener("click",()=>{i++;i<order.length?ask():scen()});
+  opts.forEach(o=>{
+    const b=el("button",null,o.t);b.type="button";btns.push([b,o]);
+    b.addEventListener("click",()=>{
+      if(o.ok)score++;
+      btns.forEach(([bb,oo])=>{bb.disabled=true;if(oo.ok)bb.classList.add("ok");else if(bb===b)bb.classList.add("ko")});
+      next.hidden=false;fb.textContent=d[3]||"";
+    });
+    card.append(b);
+  });
+  const fb=el("p","fb");card.append(fb,next);app.append(card);
+}
+const SC={
+c:{q:"Tu arrives sur une scène : la vitrine d’une boutique est brisée, un objet traîne au sol et une personne dit avoir tout vu. Que fais-tu ?",
+r:[{l:"Sécuriser la scène et ne rien toucher",w:["securis","perimetre","toucher","protege","barri","delimit"]},
+{l:"Alerter la police ou les secours",w:["police","appel","alert","secours","gendarm","prevenir"]},
+{l:"Photographier et noter ce que tu observes",w:["photo","note","ecri","decri","observ","filme"]},
+{l:"Écouter le témoin calmement",w:["temoin","interrog","question","ecout"]},
+{l:"Préserver les traces et indices (empreintes, objets)",w:["preuve","empreinte","indice","trace"]}],
+m:"Je sécurise le périmètre, je ne touche à rien, j’alerte la police, je note et photographie, j’écoute le témoin et je protège les indices."},
+l:{q:"Un corps est découvert dans une maison, sans effraction visible. Décris ta démarche de criminologue sur la scène et après.",
+r:[{l:"Sécuriser le périmètre et contrôler l’accès",w:["perimetre","securis","acces","barri","ruban"]},
+{l:"Éviter la contamination (gants, combinaison)",w:["gant","combinaison","contamin"]},
+{l:"Documenter : photos, croquis, relevés",w:["photo","croquis","documente","releve","filme","note"]},
+{l:"Prélever, étiqueter, garantir la chaîne de conservation",w:["chaine","custodia","scelle","prelev","etiquet","conserv"]},
+{l:"Formuler des hypothèses sans conclure trop vite (présomption d’innocence)",w:["hypothese","presomption","innocen","conclusion","biais","impartial","objectiv"]},
+{l:"Étudier la victime, son entourage, les témoins et le mobile",w:["temoin","entourage","victim","mobile","proche","entretien"]}],
+m:"Je sécurise l’accès, j’évite toute contamination, je documente tout, je prélève avec une chaîne de conservation, j’émets des hypothèses prudentes et j’étudie la victimologie et l’entourage."}};
+const norm=t=>t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+const clean=s=>s.normalize("NFC").replace(/[^\p{L}\p{N} _-]/gu,"").trim().slice(0,20);
+const KEY="fubuki_lb_v1";
+function loadLB(){try{const a=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(a)?a.filter(e=>e&&typeof e.n==="string"&&typeof e.s==="number"&&isFinite(e.s)).slice(0,200):[]}catch(e){return[]}}
+function saveLB(e){try{const a=loadLB();a.push(e);a.sort((x,y)=>y.s-x.s||x.t-y.t);localStorage.setItem(KEY,JSON.stringify(a.slice(0,50)))}catch(x){}}
+function board(par,max){
+  const a=loadLB().slice(0,max||10);
+  if(!a.length){par.append(el("p",null,"Aucun score pour l’instant."));return}
+  a.forEach((e,k)=>{const r=el("div","row");r.append(el("span",null,(["🥇","🥈","🥉"][k]||(k+1)+".")+" "+e.n.slice(0,20)),el("span",null,Math.max(0,Math.min(20,e.s))+"/20"));par.append(r)});
+  par.append(el("p","fb","Classement enregistré sur cet appareil."));
+}
+function ranking(){
+  clear();const card=el("div","card");card.append(el("h1",null,"🏆 Classement"));board(card,20);
+  const b=el("button",null,"← Retour");b.type="button";b.addEventListener("click",home);card.append(b);app.append(card);
+}
+function scen(){
+  clear();
+  const S=ci<4?SC.c:SC.l;const card=el("div","card");
+  card.append(el("p",null,lvl.n+" · Scène de crime 🕵️"),el("p","q",S.q),el("p",null,"Écris comment tu réagirais en tant que criminologue (2 à 6 phrases)."));
+  const ta=el("textarea");ta.maxLength=600;ta.rows=6;ta.setAttribute("aria-label","Ta réponse");
+  const go=el("button","go","Valider ma réponse");go.type="button";const out=el("div");
+  go.addEventListener("click",()=>{
+    const t=norm(ta.value);
+    if(t.length<15){out.textContent="Écris un peu plus pour que ta réponse soit évaluée.";return}
+    go.disabled=true;ta.disabled=true;
+    const hit=S.r.filter(r=>r.w.some(w=>t.includes(w)));
+    sp=Math.round(hit.length/S.r.length*50)/10;
+    out.textContent="";out.append(el("div","big",sp+" / 5"));
+    S.r.forEach(r=>out.append(el("p","fb",(hit.includes(r)?"✅ ":"➕ ")+r.l)));
+    out.append(el("p","fb","💡 Réponse type : "+S.m));
+    const nx=el("button","go","Voir ma note");nx.type="button";nx.addEventListener("click",end);out.append(nx);
+  });
+  card.append(ta,go,out);app.append(card);
+}
+function end(){
+  clear();
+  const tot=Math.round((score+sp)/(order.length+5)*200)/10;
+  saveLB({n:who,s:tot,c:lvl.n,t:Date.now()});
+  const card=el("div","card");
+  card.append(el("h1",null,"Résultat · "+who),el("p",null,lvl.n),el("div","big",tot+" / 20"),
+    el("p",null,"QCM : "+score+"/"+order.length+" · Scène de crime : "+sp+"/5"),
+    el("p",null,tot>=16?"¡Excelente ! Criminologue en devenir. 🕵️":tot>=10?"¡Muy bien ! Continue comme ça.":"Courage, réessaie pour progresser !"),
+    el("h1",null,"🏆 Classement"));
+  board(card,10);
+  const a=el("button","go","Recommencer");a.type="button";a.addEventListener("click",()=>start(ci,cp));
+  const c=el("button",null,"Changer de pays");c.type="button";c.addEventListener("click",()=>pays(ci));
+  const b=el("button",null,"Changer de classe");b.type="button";b.addEventListener("click",home);
+  card.append(a,c,b);app.append(card);
+}
+(function(){const c=document.getElementById("bub");for(let k=0;k<16;k++){const b=document.createElement("i"),z=24+Math.random()*70;b.style.width=b.style.height=z+"px";b.style.left=(Math.random()*96)+"%";b.style.animationDuration=(22+Math.random()*28)+"s";b.style.animationDelay=(-Math.random()*40)+"s";b.style.setProperty("--dx",(Math.random()*80-40)+"px");c.appendChild(b)}})();
+home();
+</script>
+</body>
+</html>
