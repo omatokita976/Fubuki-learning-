@@ -32,8 +32,9 @@ button.go{background:linear-gradient(90deg,var(--ac),var(--ac2));color:#fff;text
 .bar div{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));border-radius:3px;transition:width .3s}
 .q{font:600 1.2rem/1.4 Georgia,"Times New Roman",serif;margin:0 0 10px;color:var(--tx)}
 .fb{color:var(--tx);font-size:.95rem;margin:10px 0 4px}
-input,textarea{width:100%;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;margin:6px 0 10px}
+input,textarea,select{width:100%;font:inherit;color:var(--tx);background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px 14px;margin:6px 0 10px}
 input:focus,textarea:focus{outline:2px solid var(--ac)}
+.row span{word-break:break-word}
 .row{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--bd)}
 .logo{display:block;position:relative;z-index:1;width:96px;height:96px;margin:24px auto -10px;border-radius:50%;object-fit:cover;border:3px solid var(--ac);box-shadow:0 8px 24px rgba(168,85,199,.3)}
 body.auth{--bg1:#e9edff;--bg2:#d6ccff;--tx:#1d1a4a;--mu:#5d5a8a;--ac:#4f46e5;--ac2:#8b5cf6;--bd:rgba(79,70,229,.25)}
@@ -101,6 +102,80 @@ const LEVELS=[
 ["El Sistema Integral de Justicia Penal para Adolescentes se aplica a personas de…",["12 años cumplidos a menos de 18","0 a 5 años","18 a 30 años","más de 60 años"],0,"Loi nationale de 2016 : justice pénale spécifique pour mineurs de 12 à 17 ans."],
 ["¿Cuál es la diferencia entre derecho penal y criminología?",["El derecho penal define delitos y penas; la criminología estudia sus causas y su prevención","Son exactamente lo mismo","La criminología crea las leyes","El derecho penal solo estudia a las víctimas"],0,"La criminologie est une science empirique ; le droit pénal est normatif."]]}
 ];
+const Q=(q,a,b,c,d,e)=>[q,[a,b,c,d],0,e];
+const HARD=[
+[Q("¿En qué año se promulgó la Constitución mexicana vigente?","1917","1857","1810","1968","Elle date du 5 février 1917."),
+Q("En criminalística, un « indicio » es…","un rastro o huella que puede ayudar a esclarecer un hecho","una condena","un tipo de arma","un abogado","Indicio = indice, trace matérielle."),
+Q("Art. 17 : ¿se puede ir a la cárcel por una deuda puramente civil?","No, está prohibido","Sí, siempre","Solo los domingos","Solo si el juez es amigo","Personne ne peut être emprisonné pour une dette purement civile."),
+Q("Un niño de menos de 12 años que comete un hecho delictivo…","solo puede recibir rehabilitación y asistencia social","va a la prisión de adultos","es juzgado como adulto","paga una multa","Art. 18 de la Constitution."),
+Q("Art. 13 : nadie puede ser juzgado por…","tribunales especiales o leyes privativas","un juez de control","un tribunal de juicio oral","la Suprema Corte","Les tribunaux spéciaux sont interdits."),
+Q("« El lugar de los hechos » significa…","la scène du crime","le lieu de naissance","la salle de classe","le marché","Terme officiel mexicain pour la scène de crime."),
+Q("La dactiloscopia estudia…","les empreintes digitales","les dents","la voix","l’écriture","Dactilo = doigt ; scopia = observation."),
+Q("El « primer respondiente » es…","la primera autoridad que llega al lugar de los hechos","le dernier juge","le témoin","le suspect","Il protège la scène et les indices (protocole national)."),
+Q("Art. 20 : una prueba obtenida violando derechos fundamentales es…","nula","perfecta","gratuita","obligatoria","Elle ne peut pas être utilisée dans le procès."),
+Q("México abolió la pena de muerte en su Constitución en…","2005","1917","1857","2020","Réforme constitutionnelle de 2005 (art. 14 et 22).")],
+[Q("El Código Penal Federal fue publicado en…","1931","1917","1857","1999","Publié au Diario Oficial en 1931."),
+Q("Art. 20 C : la víctima tiene derecho a…","recibir atención médica y psicológica de urgencia","elegir al juez","borrar pruebas","pagar la condena del acusado","Elle a aussi droit à la réparation du dommage."),
+Q("Un delito « culposo » se comete por…","imprudencia o falta de cuidado","venganza","intención","sueño","Culposo = par négligence ou imprudence."),
+Q("Para la legítima defensa, la agresión debe ser…","real, actual o inminente y sin derecho","del pasado","imaginaria","legal","Il faut aussi nécessité de la défense et proportion des moyens."),
+Q("Art. 23 : un juicio criminal no puede tener más de…","tres instancias","una instancia","diez instancias","cien instancias","Art. 23 interdit aussi d’être jugé deux fois pour le même délit."),
+Q("Art. 21 : el arresto por infracciones a reglamentos dura como máximo…","36 horas","36 días","36 meses","36 semanas","Sanction administrative : amende, arrêt jusqu’à 36 h ou travail d’intérêt général."),
+Q("La Ley General de Víctimas fue publicada en…","2013","1931","1917","2024","Publiée au Diario Oficial en janvier 2013."),
+Q("El Código Nacional de Procedimientos Penales fue publicado en…","2014","1931","1990","2030","Publié en mars 2014."),
+Q("La Ley Nacional de Ejecución Penal regula…","el cumplimiento de las penas y la vida en prisión","la circulación de coches","los impuestos","las elecciones","Loi de 2016."),
+Q("La trata de personas consiste en…","captar y explotar a personas (trabajo forzado, explotación sexual)","vender legalmente un coche","organizar un viaje","ganar un juego","Ley General de 2012.")],
+[Q("Art. 14 : en materia penal está prohibido imponer una pena por…","analogía","ley exacta","sentencia","audiencia","La peine doit être prévue par une loi exactement applicable."),
+Q("Art. 20 B : una confesión sin la asistencia del defensor…","carece de valor probatorio","vale doble","es obligatoria","es pública siempre","Droit à un avocat pendant les déclarations."),
+Q("Obra dolosamente quien…","conoce los elementos del delito y quiere o acepta realizarlo","actúa dormido","actúa por accidente imprevisible","no sabe nada","CPF, art. 9 : dol direct ou éventuel."),
+Q("En estado de necesidad se lesiona un bien para…","salvar otro bien propio o ajeno de un peligro real, actual o inminente","vengarse","robar más","ocultar pruebas","Le bien sauvegardé doit valoir autant ou plus que le bien lésé."),
+Q("Un delito « permanente » es aquel…","cuya consumación se prolonga en el tiempo","que dura un segundo","que nunca existe","que no tiene víctima","Ex. : la privation de liberté (séquestration)."),
+Q("¿Cuál delito está en el catálogo constitucional de prisión preventiva oficiosa (art. 19)?","feminicidio","difamación","lesiones leves","robo simple","Le catalogue a été élargi par des réformes successives."),
+Q("Una « víctima indirecta » es…","un familiar o persona dependiente de la víctima directa","el juez","el policía","el sospechoso","Définition de la Ley General de Víctimas."),
+Q("Principio de Locard : cuando dos objetos entran en contacto…","se intercambian rastros","no pasa nada","se destruyen","se vuelven legales","Base de la criminalistique : tout contact laisse une trace."),
+Q("« De los delitos y de las penas » (1764) fue escrito por…","Cesare Beccaria","Lombroso","Quetelet","Ferri","Il plaide pour des peines proportionnées et contre la torture."),
+Q("Art. 16 : en flagrancia, cualquier persona puede detener, pero debe poner al detenido sin demora a disposición de…","la autoridad más cercana","su vecino","un periodista","un comerciante","Puis l’autorité le remet au Ministerio Público.")],
+[Q("Art. 17 : las sentencias que ponen fin a los procedimientos orales se explican en…","audiencia pública","secreto","privado","una carta","Principe de publicité et d’explication orale."),
+Q("Si el imputado lo pide, el plazo constitucional de 72 horas puede ampliarse hasta…","144 horas","24 horas","10 días","un año","Art. 19 : prorogation seulement à la demande de l’inculpé."),
+Q("« Alevosía » significa…","sorprender a alguien sin darle oportunidad de defenderse","actuar por accidente","actuar en legítima defensa","denunciar","C’est une circonstance qui qualifie l’homicide."),
+Q("Un mecanismo alternativo de solución de controversias es…","la mediación","la condena automática","la prisión","la tortura","Aussi : conciliation et junta restaurativa."),
+Q("« El hombre delincuente » (1876) fue escrito por…","Cesare Lombroso","Beccaria","Merton","Hirschi","Fondateur de l’école positiviste italienne."),
+Q("La cadena de custodia sirve para…","controlar y registrar el indicio desde su hallazgo hasta que la autoridad ordene su conclusión","hacer cadenas de oro","encadenar al juez","borrar huellas","Elle garantit l’authenticité des preuves."),
+Q("Art. 21 : ¿quién ejerce normalmente la acción penal ante los tribunales?","el Ministerio Público","el vecino","el periodista","el testigo","La loi peut permettre aux particuliers de l’exercer dans certains cas."),
+Q("Un delito « preterintencional » es cuando…","se causa por imprudencia un resultado mayor al querido","se quiere el resultado","no hay resultado","solo hay tentativa","CPF, art. 9."),
+Q("Las tres etapas del procedimiento penal acusatorio son…","investigación, intermedia y juicio","denuncia, castigo y perdón","audiencia, multa y archivo","juicio, apelación y casación","L’exécution de la peine vient ensuite."),
+Q("¿Quién resuelve la vinculación a proceso y las medidas cautelares?","el juez de control","el policía","el defensor","el perito","Juez de control = juge des libertés.")],
+[Q("Art. 20 A V : la carga de la prueba para demostrar la culpabilidad corresponde a…","la parte acusadora","el imputado","el testigo","el defensor","Conséquence de la présomption d’innocence."),
+Q("Art. 20 A VIII : el juez solo condena cuando tiene…","convicción de la culpabilidad del procesado","simpatía","presión","prisa","Convicción = certitude fondée sur les preuves."),
+Q("La terminación anticipada del proceso es posible…","si no hay oposición del inculpado, en los supuestos de la ley","nunca","solo con tortura","sin juez","Art. 20 A VII."),
+Q("La investigación complementaria no puede exceder de…","dos meses (pena máxima ≤ 2 años) o seis meses (pena mayor)","tres días","diez años","un siglo","CNPP : délais selon la peine maximale encourue."),
+Q("La suspensión condicional del proceso dura entre…","seis meses y tres años","un día y una semana","diez y veinte años","uno y dos días","Elle impose des conditions à l’imputé."),
+Q("Sutherland introdujo los conceptos de…","delito de cuello blanco y asociación diferencial","anomia","atavismo","panóptico","Le crime s’apprend aussi dans les milieux respectables."),
+Q("La anomia de Merton explica el delito como…","tensión entre metas sociales y medios legítimos para alcanzarlas","herencia genética","castigo divino","simple azar","Inspirée de Durkheim."),
+Q("La extinción de dominio es…","la pérdida a favor del Estado de bienes de origen ilícito","una pena de prisión","un impuesto","una multa de tránsito","Art. 22 et loi nationale de 2019."),
+Q("¿Cuál NO es principio del uso de la fuerza (Ley Nacional 2019)?","la venganza","la legalidad","la proporcionalidad","la rendición de cuentas","Aussi : absolue nécessité, prévention, vigilance."),
+Q("Según la ley general contra la tortura (2017), una confesión obtenida bajo tortura…","es prueba nula","es prueba perfecta","vale doble","es obligatoria","Elle ne peut fonder aucune condamnation.")],
+[Q("Art. 16 : en caso urgente, ¿quién puede ordenar la detención?","el Ministerio Público, bajo su responsabilidad","el vecino","el periodista","el alcalde","Condition : délit grave, risque de fuite, impossible d’aller au juge."),
+Q("En el procedimiento abreviado, el imputado…","admite su responsabilidad y acepta ser juzgado con los datos de la investigación","niega todo","huye","no tiene defensor","Il obtient en général une peine réduite."),
+Q("La Ley General de 2017 sobre desaparición creó…","el Sistema Nacional de Búsqueda de Personas","la pena de muerte","un nuevo código civil","una universidad","Elle vise aussi la disparition commise par des particuliers."),
+Q("Cohen y Felson (1979) : el delito requiere…","delincuente motivado, objetivo adecuado y ausencia de guardianes","pobreza y herencia","solo mala suerte","solo un arma","Théorie des activités routinières."),
+Q("Los cuatro elementos del vínculo social de Hirschi son…","apego, compromiso, participación y creencia","miedo, odio, ira y celos","dinero, poder, fama y suerte","edad, sexo, raza y clase","Théorie du contrôle social (1969)."),
+Q("Wilson y Kelling (1982) : la teoría de las « ventanas rotas » sostiene que…","el desorden visible no atendido favorece delitos más graves","romper ventanas es legal","los vidrios previenen todo","el crimen es hereditario","Base de politiques de tolérance zéro (très discutées)."),
+Q("Becker (Outsiders, 1963) y el etiquetamiento sostienen que…","la desviación resulta de la etiqueta que la sociedad aplica","todo delito es genético","la policía no influye","el delito no existe","Labeling theory."),
+Q("La reforma constitucional de 2011 reforzó…","los derechos humanos y el principio pro persona (art. 1)","la pena de muerte","el fuero militar","los tribunales especiales","Elle intègre les traités internationaux."),
+Q("Art. 20 C : se resguarda la identidad de la víctima en casos de…","menores de edad, violación, secuestro y delincuencia organizada","robo de bicicletas","multas de tránsito","ruido de vecinos","Pour la protéger de représailles."),
+Q("La doctrina del « fruto del árbol envenenado » implica que…","las pruebas derivadas de una prueba ilícita también son nulas","todo es válido","el árbol es un testigo","solo cuenta la confesión","Extension de la règle d’exclusion.")],
+[Q("Art. 21 : México puede reconocer la jurisdicción de la Corte Penal Internacional con aprobación del…","Senado, en cada caso","Congreso de un estado","alcalde","Banco de México","L’exécutif propose, le Sénat approuve."),
+Q("El caso « Campo Algodonero » (Corte IDH, 2009) condenó a México por…","feminicidios en Ciudad Juárez y falta de investigación","fraude fiscal","tráfico de coches","contaminación","Arrêt González y otras vs. México."),
+Q("El caso « Radilla Pacheco » (Corte IDH, 2009) se refiere a…","la desaparición forzada y los límites del fuero militar","un robo de banco","un fraude electoral","una carrera","Il a influencé la réforme de 2011."),
+Q("La « violencia feminicida » (LGAMVLV, 2007) es…","la forma extrema de violencia de género que puede culminar en homicidio","un deporte","una multa","un tipo de arma","Elle peut s’accompagner d’impunité sociale et d’État."),
+Q("Alfonso Quiroz Cuarón es considerado…","padre de la criminología mexicana","primer presidente","inventor del ADN","juez de la CPI","Il a marqué la criminologie et la criminalistique au Mexique."),
+Q("Benjamin Mendelsohn es conocido como…","padre de la victimología","padre de la criminalística","creador del panóptico","fundador de Interpol","Il a étudié la relation victime–agresseur."),
+Q("Gottfredson y Hirschi (1990) atribuyen el delito principalmente a…","bajo autocontrol","pobreza absoluta","herencia racial","azar","Théorie générale du crime."),
+Q("La prevención situacional del delito busca…","reducir oportunidades modificando el entorno","castigar más","eliminar tribunales","cambiar la genética","Ex. : éclairage, surveillance naturelle, contrôle d’accès."),
+Q("El « bertillonage » era un sistema de…","identificación por mediciones antropométricas","análisis de ADN","interrogatorio","huellas de voz","Alphonse Bertillon, XIXe siècle ; remplacé par les empreintes."),
+Q("La huella genética (ADN) fue desarrollada en 1984 por…","Alec Jeffreys","Locard","Galton","Vucetich","Première utilisation judiciaire en 1986 (affaire Pitchfork).")]
+];
+HARD.forEach((h,k)=>LEVELS[k].q.push(...h));
 const app=document.getElementById("app");
 let lvl=null,order=[],i=0,score=0,ci=0,cp=null,who="",sp=0;
 function el(t,c,x){const e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
@@ -193,13 +268,13 @@ function auth(){
     if(Date.now()<lock){m.textContent="Trop d’essais. Patiente 30 secondes.";return}
     const p=clean(u.value),x=users().find(y=>y.p.toLowerCase()===p.toLowerCase());
     login.disabled=true;const ok=x?await chk(w.value,x):false;login.disabled=false;
-    if(ok){fails=0;setWho(x.p);home()}else{fails++;if(fails>=5){lock=Date.now()+30000;fails=0}m.textContent="Pseudo ou mot de passe incorrect."}
+    if(ok){fails=0;log("connexion","",x.p);setWho(x.p);home()}else{fails++;log("echec","Pseudo saisi : "+p,"—");if(fails>=5){lock=Date.now()+30000;fails=0}m.textContent="Pseudo ou mot de passe incorrect."}
   },"go");
   card.append(u,w,m,login);app.append(card,btn("Pas encore de compte ? Créer un compte",signup));
 }
 function signup(){
   clear();document.body.classList.add("signup");
-  app.append(el("h1",null,"✨ Créer mon compte"),el("p",null,"Choisis un pseudo et un mot de passe."));
+  app.append(el("h1",null,"✨ Créer mon compte"),el("p",null,"Choisis un pseudo et un mot de passe. Tes réponses et tes scores sont visibles par l’administrateur."));
   const card=el("div","card");
   const u=el("input");u.type="text";u.maxLength=20;u.placeholder="Pseudo (3 à 20 caractères)";u.autocomplete="username";u.setAttribute("aria-label","Pseudo");
   const w=el("input");w.type="password";w.maxLength=64;w.placeholder="Mot de passe (8 caractères min.)";w.autocomplete="new-password";w.setAttribute("aria-label","Mot de passe");
@@ -216,7 +291,7 @@ function signup(){
     sign.disabled=true;const r=await mk(pw);sign.disabled=false;
     us.push({p:p,s:r.s,h:r.h,c:Date.now()});
     if(!wr(UK,us)){m.textContent="Impossible d’enregistrer le compte (stockage bloqué).";return}
-    fresh=true;setWho(p);home();
+    fresh=true;log("inscription","Nouveau compte",p);setWho(p);home();
   },"go");
   card.append(u,w,w2,m,sign);app.append(card,btn("← J’ai déjà un compte",auth));
 }
@@ -236,7 +311,7 @@ function adminGate(){
       isAdmin=true;admin();return;
     }
     const ok=await chk(pw,a);go.disabled=false;
-    if(ok){fails=0;isAdmin=true;admin()}else{fails++;if(fails>=5){lock=Date.now()+30000;fails=0}m.textContent="Mot de passe incorrect."}
+    if(ok){fails=0;isAdmin=true;log("admin","Connexion admin réussie","admin");admin()}else{fails++;log("admin","Échec connexion admin","admin");if(fails>=5){lock=Date.now()+30000;fails=0}m.textContent="Mot de passe incorrect."}
   },"go");
   card.append(w,m,go,btn("← Retour",home));app.append(card);
 }
@@ -250,28 +325,41 @@ function admin(){
     const r=el("div","row");
     r.append(el("span",null,x.p+" · créé le "+new Date(x.c).toLocaleDateString("fr-FR")+" · "+mine.length+" partie(s) · meilleure note "+best+"/20"));
     let armed=false;
-    const d=btn("🗑",()=>{if(!armed){armed=true;d.textContent="Confirmer ?";return}wr(UK,users().filter(y=>y.p!==x.p));wr(KEY,loadLB().filter(e=>e.n!==x.p));admin()});
-    d.style.width="auto";r.append(d);card.append(r);
+    const d=btn("🗑",()=>{if(!armed){armed=true;d.textContent="Confirmer ?";return}log("suppression","Compte supprimé : "+x.p,"admin");wr(UK,users().filter(y=>y.p!==x.p));wr(KEY,loadLB().filter(e=>e.n!==x.p));admin()});
+    d.style.width="auto";
+    const det=el("div");det.hidden=true;
+    const v=btn("📊",()=>{det.hidden=!det.hidden});v.style.width="auto";
+    if(!mine.length)det.append(el("p","fb","Aucune partie."));
+    mine.slice().sort((a,b)=>b.t-a.t).forEach(e=>det.append(el("p","fb",new Date(e.t).toLocaleString("fr-FR")+" · "+(e.c||"")+" · "+e.s+"/20")));
+    r.append(v,d);card.append(r,det);
   });
+  card.append(el("h1",null,"🏆 Classement général"));board(card,50);
   card.append(el("h1",null,"📅 Classement par jour"));
   const di=el("input");di.type="date";di.value=dk(Date.now());
   const box=el("div");
   const show=()=>{box.textContent="";if(!di.value)return;const rows=loadLB().filter(e=>dk(e.t)===di.value).sort((a,b)=>b.s-a.s);
     if(!rows.length){box.append(el("p",null,"Aucune partie ce jour."));return}
     rows.forEach((e,k)=>{const r=el("div","row");r.append(el("span",null,(k+1)+". "+e.n+" · "+String(e.c||"")),el("span",null,e.s+"/20"));box.append(r)})};
-  di.addEventListener("change",show);show();
-  card.append(di,box,btn("← Retour",()=>{isAdmin=false;home()}));app.append(card);
+  const sel=el("select");sel.setAttribute("aria-label","Filtrer par joueur");
+  const o0=el("option",null,"Tous les joueurs");o0.value="";sel.append(o0);
+  us.forEach(x=>{const o=el("option",null,x.p);o.value=x.p;sel.append(o)});
+  const jr=el("div");
+  const showLog=()=>{jr.textContent="";const ev=loadLog().filter(e=>dk(e.t)===di.value&&(!sel.value||e.u===sel.value)).reverse();
+    if(!ev.length){jr.append(el("p",null,"Aucune activité."));return}
+    ev.slice(0,300).forEach(e=>{const r=el("div","row");r.append(el("span",null,new Date(e.t).toLocaleTimeString("fr-FR")+" · "+e.u+" · "+(LBL[e.k]||e.k)+(e.d?" — "+e.d:"")));jr.append(r)})};
+  di.addEventListener("change",()=>{show();showLog()});sel.addEventListener("change",showLog);show();showLog();
+  card.append(di,box,el("h1",null,"🧾 Journal d’activité"),sel,jr,btn("← Retour",()=>{isAdmin=false;home()}));app.append(card);
 }
 function home(){
   clear();lvl=null;
   if(!who)return auth();
   const nw=fresh;fresh=false;
   app.append(el("h1",null,"❄️ Fubuki Learning"),el("p",null,(nw?"Compte créé ✅ · ":"Bienvenue "+who+" · ")+"Étape 1/2 : choisis ta classe."),el("p","fb","Contenu éducatif, ne remplace pas un conseil juridique."));
-  app.append(btn("🏆 Voir le classement",ranking));
+  const tc=el("div","card");tc.append(el("h1",null,"🏆 Top 3"));board(tc,3);tc.append(btn("Voir tout le classement",ranking));app.append(tc);
   LEVELS.forEach((L,k)=>app.append(btn(L.n+" · "+L.s,()=>pays(k))));
-  app.append(btn("Se déconnecter",()=>{setWho("");home()}));
+  app.append(btn("Se déconnecter",()=>{log("deconnexion","");setWho("");home()}));
 }
-function start(k,p){ci=k;cp=p;const C=LEVELS[k];lvl={n:C.n+" · "+p.n,q:p.m?C.q:(k<4?p.c:p.l)};order=shuffle(lvl.q);i=0;score=0;sp=0;ask()}
+function start(k,p){ci=k;cp=p;const C=LEVELS[k];lvl={n:C.n+" · "+p.n,q:p.m?C.q:(k<4?p.c:p.l)};order=shuffle(lvl.q).slice(0,10);i=0;score=0;sp=0;log("partie",lvl.n+" ("+order.length+" questions)");ask()}
 function ask(){
   clear();
   const d=order[i];
@@ -285,7 +373,7 @@ function ask(){
   opts.forEach(o=>{
     const b=el("button",null,o.t);b.type="button";btns.push([b,o]);
     b.addEventListener("click",()=>{
-      if(o.ok)score++;
+      if(o.ok)score++;log("reponse",(o.ok?"✅ ":"❌ ")+d[0]+" → "+o.t);
       btns.forEach(([bb,oo])=>{bb.disabled=true;if(oo.ok)bb.classList.add("ok");else if(bb===b)bb.classList.add("ko")});
       next.hidden=false;fb.textContent=d[3]||"";
     });
@@ -312,19 +400,27 @@ m:"Je sécurise l’accès, j’évite toute contamination, je documente tout, j
 const norm=t=>t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
 const clean=s=>s.normalize("NFC").replace(/[^\p{L}\p{N} _-]/gu,"").trim().slice(0,20);
 const KEY="fubuki_lb_v1";
-function loadLB(){try{const a=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(a)?a.filter(e=>e&&typeof e.n==="string"&&typeof e.s==="number"&&isFinite(e.s)&&typeof e.t==="number").slice(0,1000):[]}catch(e){return[]}}
-function saveLB(e){try{const a=loadLB();a.push(e);a.sort((x,y)=>y.s-x.s||x.t-y.t);localStorage.setItem(KEY,JSON.stringify(a.slice(0,500)))}catch(x){}}
+const LOGK="fubuki_log_v1";
+function log(k,d,u){try{const a=JSON.parse(localStorage.getItem(LOGK)||"[]"),l=Array.isArray(a)?a:[];l.push({t:Date.now(),u:u||who||"—",k:k,d:String(d||"").slice(0,700)});localStorage.setItem(LOGK,JSON.stringify(l.slice(-3000)))}catch(e){}}
+function loadLog(){try{const a=JSON.parse(localStorage.getItem(LOGK)||"[]");return Array.isArray(a)?a.filter(e=>e&&typeof e.t==="number"&&typeof e.k==="string"&&typeof e.u==="string"):[]}catch(e){return[]}}
+const LBL={inscription:"🆕 Inscription",connexion:"🔓 Connexion",echec:"⚠️ Échec de connexion",deconnexion:"🚪 Déconnexion",partie:"▶️ Début de partie",reponse:"❓ Réponse QCM",scene:"🕵️ Scène de crime",fin:"🏁 Fin de partie",admin:"🔐 Admin",suppression:"🗑 Suppression"};
+function loadLB(){try{const a=JSON.parse(localStorage.getItem(KEY)||"[]");return Array.isArray(a)?a.filter(e=>e&&typeof e.n==="string"&&typeof e.s==="number"&&isFinite(e.s)&&typeof e.t==="number").slice(-5000):[]}catch(e){return[]}}
+function saveLB(e){try{const a=loadLB();a.push(e);localStorage.setItem(KEY,JSON.stringify(a.slice(-5000)))}catch(x){}}
 function dk(t){const d=new Date(t);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
 function board(par,max,day){
-  const a=loadLB().filter(e=>!day||dk(e.t)===day).slice(0,max||10);
+  const m=Object.create(null);
+  loadLB().filter(e=>!day||dk(e.t)===day).forEach(e=>{const b=m[e.n];if(!b)m[e.n]={n:e.n,s:e.s,t:e.t,g:1};else{b.g++;if(e.s>b.s){b.s=e.s;b.t=e.t}}});
+  const a=Object.values(m).sort((x,y)=>y.s-x.s||x.t-y.t),mx=max||10;
   if(!a.length){par.append(el("p",null,"Aucun score pour l’instant."));return}
-  a.forEach((e,k)=>{const r=el("div","row");r.append(el("span",null,(["🥇","🥈","🥉"][k]||(k+1)+".")+" "+e.n.slice(0,20)),el("span",null,Math.max(0,Math.min(20,e.s))+"/20"));par.append(r)});
-  if(!day)par.append(el("p","fb","Classement enregistré sur cet appareil."));
+  a.slice(0,mx).forEach((e,k)=>{const r=el("div","row");if(e.n===who)r.style.fontWeight="700";r.append(el("span",null,(["🥇","🥈","🥉"][k]||(k+1)+".")+" "+e.n.slice(0,20)+" · "+e.g+" partie"+(e.g>1?"s":"")),el("span",null,Math.max(0,Math.min(20,e.s))+"/20"));par.append(r)});
+  const me=a.findIndex(e=>e.n===who);
+  if(me>=mx)par.append(el("p","fb","Ta place : "+(me+1)+"e sur "+a.length));
+  if(!day)par.append(el("p","fb","Classement basé sur la meilleure note de chaque joueur, enregistré sur cet appareil."));
 }
 function ranking(){
   clear();const card=el("div","card");
   card.append(el("h1",null,"🏆 Aujourd’hui"));board(card,10,dk(Date.now()));
-  card.append(el("h1",null,"🏆 Général"));board(card,10);
+  card.append(el("h1",null,"🏆 Général"));board(card,50);
   card.append(btn("← Retour",home));app.append(card);
 }
 function scen(){
@@ -338,7 +434,7 @@ function scen(){
     if(t.length<15){out.textContent="Écris un peu plus pour que ta réponse soit évaluée.";return}
     go.disabled=true;ta.disabled=true;
     const hit=S.r.filter(r=>r.w.some(w=>t.includes(w)));
-    sp=Math.round(hit.length/S.r.length*50)/10;
+    sp=Math.round(hit.length/S.r.length*50)/10;log("scene","["+sp+"/5] "+ta.value.slice(0,600));
     out.textContent="";out.append(el("div","big",sp+" / 5"));
     S.r.forEach(r=>out.append(el("p","fb",(hit.includes(r)?"✅ ":"➕ ")+r.l)));
     out.append(el("p","fb","💡 Réponse type : "+S.m));
@@ -349,7 +445,7 @@ function scen(){
 function end(){
   clear();
   const tot=Math.round((score+sp)/(order.length+5)*200)/10;
-  saveLB({n:who,s:tot,c:lvl.n,t:Date.now()});
+  saveLB({n:who,s:tot,c:lvl.n,t:Date.now()});log("fin",lvl.n+" · note "+tot+"/20");
   const card=el("div","card");
   card.append(el("h1",null,"Résultat · "+who),el("p",null,lvl.n),el("div","big",tot+" / 20"),
     el("p",null,"QCM : "+score+"/"+order.length+" · Scène de crime : "+sp+"/5"),
